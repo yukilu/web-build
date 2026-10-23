@@ -24,9 +24,7 @@ if not exist "dist\index.html" (
 
 if not exist ".venv\Scripts\python.exe" (
   echo [packforge] Missing Python virtual environment: .venv
-  echo Create it in the project directory first:
-  echo   python -m venv .venv
-  echo   .venv\Scripts\python.exe -m pip install -r requirements.txt
+  echo Run install-packforge.bat first.
   pause
   exit /b 1
 )

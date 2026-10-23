@@ -1,9 +1,40 @@
+# 依赖与前端构建产物
 node_modules/
 dist/
-data/
+*.tsbuildinfo
+.vite/
+coverage/
+.eslintcache
+
+# Python 虚拟环境与缓存
 .venv/
+venv/
 __pycache__/
 *.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# 本机运行数据与日志
+data/
+logs/
 *.log
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+
+# 打包产物与系统临时文件
+*.zip
+*.tmp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 环境变量与编辑器本地配置
 .env
-.env.local
+.env.*
+!.env.example
+.vscode/
+.idea/
