@@ -1,0 +1,37 @@
+{
+  "name": "packforge",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "本地项目打包工作台：配置项目、执行打包脚本并输出 ZIP。",
+  "scripts": {
+    "dev": "concurrently -k -n api,web -c yellow,cyan \"python scripts/api.py --reload\" \"vite\"",
+    "dev:server": "python scripts/api.py --reload",
+    "dev:web": "vite",
+    "build": "tsc -p tsconfig.json --noEmit && vite build",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "install:api": "python -m pip install -r requirements.txt",
+    "start": "python scripts/api.py",
+    "preview": "vite preview"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "dependencies": {
+    "@fontsource/great-vibes": "^5.3.0",
+    "lucide-react": "^1.61.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "concurrently": "^10.0.6",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5"
+  }
+}
