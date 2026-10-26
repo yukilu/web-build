@@ -2,6 +2,17 @@ import { ArrowUpRight, Package, Plus } from "lucide-react";
 import type { ProjectSummary } from "../../shared/types";
 import { pathTail } from "../lib/format";
 
+const projectAccents = [
+  "from-sky-500 to-sky-700",
+  "from-emerald-500 to-emerald-700",
+  "from-violet-500 to-violet-700",
+  "from-rose-500 to-rose-700",
+  "from-cyan-500 to-cyan-700",
+  "from-fuchsia-500 to-fuchsia-700",
+  "from-indigo-500 to-indigo-700",
+  "from-teal-500 to-teal-700",
+];
+
 type SidebarProps = {
   projects: ProjectSummary[];
   selectedId: string | null;
@@ -70,11 +81,15 @@ export function Sidebar({
             <span>从一个打包目标开始。</span>
           </div>
         ) : (
-          projects.map((project) => {
+          projects.map((project, index) => {
             const active = selectedId === project.id;
             const isRunning =
               project.id === runningProjectId ||
               project.lastRun?.status === "running";
+            const rowTone =
+              index % 2 === 0 ? "bg-white/[0.03]" : "bg-white/[0.06]";
+            const avatarAccent =
+              projectAccents[index % projectAccents.length];
             return (
               <button
                 key={project.id}
@@ -84,15 +99,15 @@ export function Sidebar({
                 disabled={busy}
                 className={`group flex min-w-[218px] shrink-0 items-center gap-3 rounded-2xl border px-3 py-2.5 text-left transition lg:min-w-0 lg:w-full ${
                   active
-                    ? "border-orange-400/25 bg-white/[0.07] text-white shadow-lg shadow-orange-950/20"
-                    : "border-transparent text-slate-300 hover:border-white/10 hover:bg-white/[0.04]"
+                    ? "border-orange-400/40 bg-orange-500/10 text-white shadow-lg shadow-orange-950/20"
+                    : `border-transparent text-slate-300 ${rowTone} hover:border-white/10 hover:bg-white/[0.09]`
                 } disabled:opacity-50`}
               >
                 <span
-                  className={`relative grid size-9 shrink-0 place-items-center rounded-xl text-sm font-semibold ring-1 ${
+                  className={`relative grid size-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br text-sm font-semibold text-white transition ${avatarAccent} ${
                     active
-                      ? "bg-gradient-to-br from-orange-400 to-orange-600 text-white ring-white/20"
-                      : "bg-white/[0.05] text-slate-200 ring-white/10"
+                      ? "ring-2 ring-white/80 shadow-lg shadow-slate-950/30"
+                      : "ring-1 ring-white/15"
                   }`}
                 >
                   {project.name.slice(0, 1).toUpperCase()}
