@@ -113,14 +113,13 @@ export function validateProjectForm(form: ProjectFormState): string | null {
   if (!normalized.projectDir) {
     return "请选择项目根目录";
   }
-  if (!normalized.branch) {
-    return "请填写 Git 分支";
-  }
-  if (normalized.branch.length > 200) {
-    return "Git 分支不能超过 200 个字符";
-  }
-  if (/\s/.test(normalized.branch) || normalized.branch.startsWith("-")) {
-    return "Git 分支名称不合法";
+  if (normalized.branch) {
+    if (normalized.branch.length > 200) {
+      return "Git 分支不能超过 200 个字符";
+    }
+    if (/\s/.test(normalized.branch) || normalized.branch.startsWith("-")) {
+      return "Git 分支名称不合法";
+    }
   }
   if (!normalized.packageDir) {
     return "请填写需要压缩的打包目录";

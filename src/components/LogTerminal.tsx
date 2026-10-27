@@ -43,7 +43,6 @@ export function LogTerminal({ run, loading }: LogTerminalProps) {
   const bodyRef = useRef<HTMLPreElement>(null);
   const resetTimer = useRef<number | null>(null);
   const lastRunIdRef = useRef<string | null>(null);
-  const followBottomRef = useRef(false);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -58,11 +57,10 @@ export function LogTerminal({ run, loading }: LogTerminalProps) {
     const runId = run?.id ?? null;
     if (lastRunIdRef.current !== runId) {
       lastRunIdRef.current = runId;
-      followBottomRef.current = false;
       body.scrollTop = 0;
       return;
     }
-    if (run?.status === "running" && followBottomRef.current) {
+    if (run?.status === "running") {
       body.scrollTop = body.scrollHeight;
     }
   }, [run?.id, run?.log, run?.status, loading]);
@@ -152,12 +150,6 @@ export function LogTerminal({ run, loading }: LogTerminalProps) {
         <pre
           className="font-console terminal-scroll min-h-[300px] max-h-[420px] flex-1 overflow-auto whitespace-pre-wrap break-words p-5 text-sm leading-6 text-slate-300 sm:min-h-[360px] sm:max-h-[560px] xl:min-h-0 xl:max-h-none"
           ref={bodyRef}
-          onScroll={(event) => {
-            const body = event.currentTarget;
-            followBottomRef.current =
-              body.scrollHeight - body.clientHeight > 24 &&
-              body.scrollHeight - body.scrollTop - body.clientHeight < 48;
-          }}
         >
           {run.log ||
             (run.status === "running"

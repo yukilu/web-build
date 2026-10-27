@@ -10,9 +10,9 @@ if not exist "dist\index.html" (
   echo [packforge] Frontend build not found. Building...
   where npm >nul 2>nul
   if errorlevel 1 (
-    if exist "%LOCALAPPDATA%\Author Software\nvm\.nodejs\npm.cmd" (
-      set "PATH=%LOCALAPPDATA%\Author Software\nvm\.nodejs;%PATH%"
-    )
+    echo [packforge] npm was not found. Install Node.js and add it to PATH.
+    pause
+    exit /b 1
   )
   call npm run build
   if errorlevel 1 (

@@ -55,6 +55,7 @@ export function DirectoryPicker({
   const [listing, setListing] = useState<DirectoryListing | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedPath, setSelectedPath] = useState<string | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [createName, setCreateName] = useState("");
   const [creating, setCreating] = useState(false);
@@ -66,6 +67,7 @@ export function DirectoryPicker({
     const requestId = ++requestRef.current;
     setLoading(true);
     setError(null);
+    setSelectedPath(null);
     try {
       const result = await api.listDirectories(target);
       if (requestId === requestRef.current) {
@@ -88,6 +90,7 @@ export function DirectoryPicker({
     }
     setListing(null);
     setError(null);
+    setSelectedPath(null);
     setLoading(false);
     setCreateOpen(false);
     setCreateName("");
@@ -135,7 +138,7 @@ export function DirectoryPicker({
 
   const handleSelect = () => {
     if (listing && !busy) {
-      onSelect(listing.path);
+      onSelect(selectedPath ?? listing.path);
     }
   };
 
@@ -202,7 +205,7 @@ export function DirectoryPicker({
                 {title}
               </h2>
               <p id={descriptionId} className="mt-1 text-sm leading-6 text-slate-500">
-                进入目标文件夹后，选择当前所在目录。
+                单击选中文件夹，双击进入下一层。
               </p>
             </div>
           </div>
@@ -331,29 +334,53 @@ export function DirectoryPicker({
                     </span>
                   </div>
                 ) : (
-                  listing.directories.map((directory) => (
-                    <button
-                      key={directory.path}
-                      type="button"
-                      className="flex w-full items-center gap-3 rounded-xl px-2.5 py-2 text-left transition hover:bg-white hover:shadow-sm disabled:opacity-50"
-                      onClick={() => void loadDirectory(directory.path)}
-                      disabled={busy}
-                      title={directory.path}
-                    >
-                      <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-amber-50 text-amber-600">
-                        <Folder size={16} strokeWidth={1.8} />
-                      </span>
-                      <span className="min-w-0 flex-1 truncate text-sm font-medium text-slate-700">
-                        {directory.name}
-                      </span>
-                      <ChevronRight
-                        size={15}
-                        strokeWidth={1.8}
-                        className="shrink-0 text-slate-300"
-                        aria-hidden="true"
-                      />
-                    </button>
-                  ))
+                  listing.directories.map((directory) => {
+                    const isSelected = selectedPath === directory.path;
+                    return (
+                      <button
+                        key={directory.path}
+                        type="button"
+                        className={`flex w-full items-center gap-3 rounded-xl px-2.5 py-2 text-left transition disabled:opacity-50 ${
+                          isSelected
+                            ? "bg-orange-50 text-orange-700 ring-1 ring-orange-200"
+                            : "text-slate-700 hover:bg-white hover:shadow-sm"
+                        }`}
+                        onClick={() => setSelectedPath(directory.path)}
+                        onDoubleClick={() => void loadDirectory(directory.path)}
+                        disabled={busy}
+                        title={directory.path}
+                        aria-pressed={isSelected}
+                      >
+                        <span
+                          className={`grid size-8 shrink-0 place-items-center rounded-lg ${
+                            isSelected
+                              ? "bg-orange-100 text-orange-600"
+                              : "bg-amber-50 text-amber-600"
+                          }`}
+                        >
+                          <Folder size={16} strokeWidth={1.8} />
+                        </span>
+                        <span className="min-w-0 flex-1 truncate text-sm font-medium">
+                          {directory.name}
+                        </span>
+                        {isSelected ? (
+                          <Check
+                            size={15}
+                            strokeWidth={2.2}
+                            className="shrink-0 text-orange-500"
+                            aria-hidden="true"
+                          />
+                        ) : (
+                          <ChevronRight
+                            size={15}
+                            strokeWidth={1.8}
+                            className="shrink-0 text-slate-300"
+                            aria-hidden="true"
+                          />
+                        )}
+                      </button>
+                    );
+                  })
                 )}
               </div>
             </>

@@ -196,12 +196,11 @@ def _read_project_input(body: Any) -> dict[str, str]:
         raise ApiError(400, "项目名称不能超过 80 个字符")
     if not project_dir:
         raise ApiError(400, "请选择项目根目录")
-    if not branch:
-        raise ApiError(400, "请填写 Git 分支")
-    if len(branch) > 200:
-        raise ApiError(400, "Git 分支不能超过 200 个字符")
-    if re.search(r"\s", branch) or branch.startswith("-"):
-        raise ApiError(400, "Git 分支名称不合法")
+    if branch:
+        if len(branch) > 200:
+            raise ApiError(400, "Git 分支不能超过 200 个字符")
+        if re.search(r"\s", branch) or branch.startswith("-"):
+            raise ApiError(400, "Git 分支名称不合法")
     if not package_dir:
         raise ApiError(400, "请填写打包目录")
     if not output_dir:
@@ -395,8 +394,6 @@ def begin_run(
     _validate_release_prefix(
         _strip_zip_suffix(project.get("releaseName", ""))
     )
-    if not project.get("branch"):
-        raise ApiError(400, "请先填写 Git 分支")
     if not project.get("buildParam"):
         raise ApiError(400, "请先填写打包参数")
     if project.get("configMode") not in CONFIG_MODES:

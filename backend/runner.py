@@ -190,42 +190,6 @@ def _unique_release_paths(output_dir: str, base_name: str) -> tuple[str, str]:
     return candidate, os.path.join(output_dir, f"{candidate}.zip")
 
 
-def _preferred_node_home() -> str | None:
-    override = os.environ.get("PACKFORGE_NODE_HOME", "").strip()
-    if override and os.path.isfile(os.path.join(override, "node.exe")):
-        return os.path.abspath(override)
-
-    roots: list[str] = []
-    nvm_home = os.environ.get("NVM_HOME", "").strip()
-    if nvm_home:
-        roots.append(nvm_home)
-    local_appdata = os.environ.get("LOCALAPPDATA", "").strip()
-    if local_appdata:
-        roots.extend(
-            [
-                os.path.join(local_appdata, "Author Software", "nvm"),
-                os.path.join(local_appdata, "nvm"),
-            ]
-        )
-
-    for root in roots:
-        installs = os.path.join(root, "installs")
-        try:
-            names = os.listdir(installs)
-        except OSError:
-            continue
-        candidates: list[tuple[int, int, str]] = []
-        for name in names:
-            match = re.fullmatch(r"v22\.(\d+)\.(\d+)", name)
-            if match and os.path.isfile(
-                os.path.join(installs, name, "node.exe")
-            ):
-                candidates.append((int(match.group(1)), int(match.group(2)), name))
-        if candidates:
-            return os.path.join(installs, max(candidates)[2])
-    return None
-
-
 def _build_environment() -> dict[str, str]:
     env = os.environ.copy()
     env["FORCE_COLOR"] = "0"
@@ -241,7 +205,6 @@ def _build_environment() -> dict[str, str]:
         env[path_key] = os.pathsep.join(
             part
             for part in (
-                _preferred_node_home(),
                 os.path.join(system_root, "System32"),
                 system_root,
                 env.get(path_key, ""),
@@ -474,11 +437,6 @@ def _execute_run(active: ActiveRun) -> None:
     started = time.monotonic()
     log(f"[packforge] 开始任务 · {project['name']}\n")
     log(f"[packforge] 工作目录 · {project_root}\n")
-    node_home = _preferred_node_home()
-    log(
-        f"[packforge] Node · "
-        f"{os.path.basename(node_home) if node_home else '系统 PATH'}\n"
-    )
     if branch:
         log(f"[packforge] Git 分支 · {branch}\n")
     log(f"[packforge] 打包目录 · {package_path}\n")
@@ -500,8 +458,6 @@ def _execute_run(active: ActiveRun) -> None:
             raise RuntimeError("未设置打包参数")
         if extra_path and not os.path.isdir(extra_path):
             raise RuntimeError(f"Taro 文件目录不存在或不是目录：{extra_path}")
-        if not branch:
-            raise RuntimeError("未设置 Git 分支")
         prepare_git_branch(project_root, branch, log)
 
         command = f"npm run build:{build_param}"

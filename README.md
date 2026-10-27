@@ -10,7 +10,8 @@ Packforge 是一个运行在本机的项目打包工作台。它负责保存多�
 - 打包前 Git 预检：
   - 项目根目录必须是 Git 仓库；
   - 工作区有未提交或未跟踪改动时中断；
-  - 不在指定分支时自动 `git checkout`，失败则中断。
+  - 填写了目标分支且当前不在该分支时自动 `git checkout`，失败则中断；
+  - 未填写分支时直接使用当前分支。
 - 构建命令固定为 `npm run build:<打包参数>`，不允许执行任意脚本。
 - 打包目录复制到输出目录后：
   - 可选把 Taro 文件夹内容合并为发布包内的 `taro`；
@@ -66,12 +67,12 @@ package.json            Node 依赖与脚本
 ## 环境要求
 
 - Windows 10/11（使用了 `pythonw`、`.bat` 和 Windows 图标）。
-- Node.js 22（`package.json` 要求 `>=22.12.0`），npm 随 Node 安装。
+- Node.js 与 npm；使用 PATH 中的 `node`/`npm` 即可。
 - Python 3.13，建议使用项目内 `.venv`。
-- Git，并确保目标项目的分支在本地存在。
+- Git；如果填写了目标分支，请确保该分支在本地存在。
 - 目标项目需要有自己的 `build:<参数>` npm 脚本。
 
-Packforge 执行目标项目构建时会优先使用本机已安装的 Node 22（通过 `PACKFORGE_NODE_HOME` 指定，或自动查找 NVM 的 `v22.*` 安装目录）。这可以避免桌面快捷方式继承到 Node 24。前端自身构建仍使用启动命令所在环境的 Node。
+Packforge 直接使用系统 PATH 中的 `node`/`npm` 执行目标项目和前端的构建，不再切换或固定 Node 版本。
 
 ## 安装
 
@@ -182,7 +183,7 @@ $sc.Save()
 | Taro 文件目录 | 可选。文件夹内容会复制到发布包的 `taro` 下。 |
 | 打包文件名前缀 | 必填，例如 `dist_for_client`。 |
 | 保留 config | `所有` / `仅默认` / `仅默认和城建发`。 |
-| Git 分支 | 必填，打包前会切换到该分支。 |
+| Git 分支 | 可选；填写后在打包前切换到该分支，留空则使用当前分支。 |
 | 打包参数 | 对应 `npm run build:<参数>`，例如 `client`。 |
 
 `保留 config` 的策略：
@@ -234,7 +235,6 @@ ZIP 内部保留同名顶层文件夹。打包目录的原始 `dist` 不会被�
 | `PACKFORGE_DB` | SQLite 文件路径，默认 `data/packforge.db`。 |
 | `PACKFORGE_CLIENT_DIST` | 前端静态文件目录，默认 `dist/`。 |
 | `PACKFORGE_API_TARGET` | Vite 开发代理目标，默认 `http://127.0.0.1:4310`。 |
-| `PACKFORGE_NODE_HOME` | 指定目标项目构建使用的 Node 安装目录。 |
 | `PACKFORGE_NO_BROWSER` | 启动器设为 `1` 时不自动打开浏览器。 |
 
 ## API 概览

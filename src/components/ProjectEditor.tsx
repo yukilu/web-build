@@ -315,11 +315,8 @@ export function ProjectEditor({
 
           <label className="flex min-w-0 flex-col gap-1.5" htmlFor="git-branch">
             <span className="flex min-h-[22px] items-end justify-between gap-2">
-              <span className="flex items-center gap-1.5 text-sm font-medium text-slate-700">
-                Git 分支
-                <RequiredDot />
-              </span>
-              <span className={hintClass}>打包前自动切换</span>
+              <span className="text-sm font-medium text-slate-700">Git 分支</span>
+              <span className={hintClass}>留空使用当前分支</span>
             </span>
             <span className="relative block">
               <GitBranch
@@ -439,7 +436,8 @@ export function ProjectEditor({
             将执行{" "}
             <code className="font-mono text-slate-500">npm run build:参数</code>
             。直接打包生成「前缀_YYMMDD」；带后缀打包会弹窗填写后缀，生成「前缀_后缀_YYMMDD」，并记住上次的值。重名时依次追加
-            _1、_2；打包前会校验 Git 工作区并切换到指定分支，Taro 文件夹统一命名为 taro，config 按所选策略保留。
+            _1、_2；打包前会校验 Git 工作区，填写分支时会切换到该分支，留空则使用当前分支。Taro
+            文件夹统一命名为 taro，config 按所选策略保留。
           </p>
         </div>
 
